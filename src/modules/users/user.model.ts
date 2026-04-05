@@ -1,15 +1,17 @@
 import mongoose, { Schema, Model, Document } from "mongoose";
-import Role from "./role.models.js";
+import bcrypt from "bcrypt";
+import { Role } from "./role.models.js";
 
 export interface IUser extends Document {
-    fullName: string,
-    username: string,
-    email: string,
-    password: string,
-    roles: mongoose.Types.ObjectId[],
-    isActive: boolean,
-    createdAt: Date,
-    updatedAt: Date,
+    fullName: string;
+    username: string;
+    email: string;
+    password: string;
+    roles: mongoose.Types.ObjectId[];
+    isActive: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+    isPasswordCorrect(password: string): Promise<boolean>;
 }
 
 const userSchema = new Schema<IUser>({
@@ -42,7 +44,7 @@ const userSchema = new Schema<IUser>({
     roles: [
         {
             type: Schema.Types.ObjectId,
-            ref: "Role",
+            ref: Role,
             index: true,
             required: true,
         },
@@ -53,6 +55,17 @@ const userSchema = new Schema<IUser>({
     },
 }, { timestamps: true });
 
-const User: Model<IUser> = mongoose.model<IUser>("User", userSchema);
+const SALT_ROUNDS = 10;
 
-export default User;
+userSchema.pre("save", async function (next) {
+    if (!this.isModified("password")) {
+        return;
+    };
+    this.password = await bcrypt.hash(this.password, SALT_ROUNDS);
+})
+
+userSchema.methods.isPasswordCorrect = async function (password: string): Promise<boolean> {
+    return await bcrypt.compare(password, this.password)
+}
+
+export const User: Model<IUser> = mongoose.model<IUser>("User", userSchema);

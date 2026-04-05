@@ -1,4 +1,3 @@
-// models/permission.model.ts
 import mongoose, { Schema, Model, Document } from "mongoose";
 
 export interface IPermission extends Document {

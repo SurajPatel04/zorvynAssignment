@@ -3,12 +3,13 @@ import mongoose from "mongoose";
 
 import Permission from "../modules/permissions/permission.model.js";
 import type { IPermission } from "../modules/permissions/permission.model.js";
-import Role from "../modules/users/role.models.js";
-import User from "../modules/users/user.model.js";
+import { Role } from "../modules/users/role.models.js";
+import { User } from "../modules/users/user.model.js";
+import { ROLES } from "../utils/constant.js";
 import connectDB from "../config/db.js";
 import { env } from "../config/env.js";
 
-// Upsert a single permission (safe to run multiple times)
+// Upsert a single permission
 const upsertPermission = async (perm: { action: string; resource: string; description: string }) => {
     return Permission.findOneAndUpdate(
         { action: perm.action, resource: perm.resource },
@@ -82,7 +83,7 @@ const seedDatabase = async () => {
         console.log("Upserting roles...");
 
         const viewerRole = await upsertRole({
-            name: "viewer",
+            name: ROLES.VIEWER,
             description: "Can only view dashboard data and financial records",
             permissions: [
                 getPermId("read", "dashboard"),
@@ -91,7 +92,7 @@ const seedDatabase = async () => {
         });
 
         const analystRole = await upsertRole({
-            name: "analyst",
+            name: ROLES.ANALYST,
             description: "Can view records, users, and access dashboard insights",
             permissions: [
                 getPermId("read", "transactions"),
@@ -101,7 +102,7 @@ const seedDatabase = async () => {
         });
 
         const adminRole = await upsertRole({
-            name: "admin",
+            name: ROLES.ADMIN,
             description: "Full system access — manage records, users, and dashboard",
             permissions: permissions.map((p: IPermission) => p._id),
         });

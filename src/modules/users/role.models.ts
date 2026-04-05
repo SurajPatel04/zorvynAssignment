@@ -1,4 +1,3 @@
-// models/role.model.ts
 import mongoose, { Schema, Model, Document, Types } from "mongoose";
 
 export interface IRole extends Document {
@@ -34,6 +33,4 @@ const roleSchema = new Schema<IRole>(
     { timestamps: true }
 );
 
-const Role: Model<IRole> = mongoose.model<IRole>("Role", roleSchema);
-
-export default Role;
+export const Role: Model<IRole> = mongoose.model<IRole>("Role", roleSchema);

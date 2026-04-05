@@ -16,23 +16,32 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx src/config/swagger.ts && tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "seed": "tsx src/scripts/seed.ts"
+    "seed": "tsx src/scripts/seed.ts",
+    "swagger": "tsx src/config/swagger.ts"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.5.2",
+    "@types/swagger-ui-express": "^4.1.8",
     "tsx": "^4.21.0",
     "typescript": "^6.0.2"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^17.4.0",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.4.1"
+    "mongoose": "^9.4.1",
+    "ms": "^2.1.3",
+    "swagger-autogen": "^2.23.7",
+    "swagger-ui-express": "^5.0.1",
+    "zod": "^4.3.6"
   }
 }

@@ -1,30 +1,42 @@
-import dotenv from "dotenv";
-dotenv.config();
+import express, { type Application } from "express";
+import type { Request, Response, NextFunction } from "express";
+import cookieParser from "cookie-parser";
+import swaggerUi from "swagger-ui-express";
+import { createRequire } from "module";
 
-const requiredEnv = [
-    "MONGO_URI",
-    "ACCESS_TOKEN_SECRET",
-    "REFRESH_TOKEN_SECRET"
-] as const;
+const require = createRequire(import.meta.url);
+const swaggerOutput = require("./config/swagger-output.json");
 
-for (const key of requiredEnv) {
-    if (!process.env[key]) {
-        throw new Error(`Missing required environment variable: ${key}`);
-    }
-}
+import authRouter from "./modules/auth/auth.routes.js";
 
-export const env = {
-    port: Number(process.env.PORT) || 8000,
+const app: Application = express();
 
-    mongoURI: process.env.MONGO_URI as string,
+// middleware
+app.use(express.json({ limit: "12kb" }));
+app.use(cookieParser());
 
-    accessToken: {
-        secret: process.env.ACCESS_TOKEN_SECRET as string,
-        expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "30m",
-    },
+// swagger docs
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOutput));
 
-    refreshToken: {
-        secret: process.env.REFRESH_TOKEN_SECRET as string,
-        expiresIn: process.env.REFRESH_TOKEN_EXPIRY || "10d",
-    },
-} as const;
+// routes
+app.use("/api/v1/auth", authRouter);
+
+app.use((req: Request, res: Response) => {
+    res.status(404).json({
+        success: false,
+        message: "Route not found",
+    });
+});
+
+// GLOBAL ERROR HANDLER
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    console.error("ERROR:", err);
+
+    res.status(err.statusCode || 500).json({
+        success: false,
+        message: err.message || "Internal Server Error",
+        errors: err.errors || [],
+    });
+});
+
+export default app;
