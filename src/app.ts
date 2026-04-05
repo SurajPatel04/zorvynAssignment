@@ -9,22 +9,22 @@ const requiredEnv = [
 
 for (const key of requiredEnv) {
     if (!process.env[key]) {
-      throw new Error(`Missing required environment variable: ${key}`);
+        throw new Error(`Missing required environment variable: ${key}`);
     }
 }
 
 export const env = {
-    port: Number(process.env.PORT) || 8000, 
+    port: Number(process.env.PORT) || 8000,
 
-    mongoURI: process.env.MONGO_URI as string,  
+    mongoURI: process.env.MONGO_URI as string,
 
     accessToken: {
-      secret: process.env.ACCESS_TOKEN_SECRET as string,
-      expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "30m",
-    },  
+        secret: process.env.ACCESS_TOKEN_SECRET as string,
+        expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "30m",
+    },
 
     refreshToken: {
-      secret: process.env.REFRESH_TOKEN_SECRET as string,
-      expiresIn: process.env.REFRESH_TOKEN_EXPIRY || "10d",
+        secret: process.env.REFRESH_TOKEN_SECRET as string,
+        expiresIn: process.env.REFRESH_TOKEN_EXPIRY || "10d",
     },
 } as const;

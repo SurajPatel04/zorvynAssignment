@@ -13,7 +13,7 @@ const upsertPermission = async (perm: { action: string; resource: string; descri
     return Permission.findOneAndUpdate(
         { action: perm.action, resource: perm.resource },
         perm,
-        { upsert: true, new: true }
+        { upsert: true, returnDocument: 'after' }
     );
 };
 
@@ -22,7 +22,7 @@ const upsertRole = async (role: { name: string; description: string; permissions
     return Role.findOneAndUpdate(
         { name: role.name },
         role,
-        { upsert: true, new: true }
+        { upsert: true, returnDocument: 'after' }
     );
 };
 
