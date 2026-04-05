@@ -1,0 +1,33 @@
+{
+  "name": "zorvynassignment",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/SurajPatel04/zorvynAssignment#readme",
+  "bugs": {
+    "url": "https://github.com/SurajPatel04/zorvynAssignment/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SurajPatel04/zorvynAssignment.git"
+  },
+  "license": "ISC",
+  "author": "SurajPatel",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.5.2",
+    "nodemon": "^3.1.14",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.2"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
