@@ -1,4 +1,5 @@
 import swaggerAutogen from "swagger-autogen";
+import { env } from "./env.js";
 
 const doc = {
     info: {
@@ -6,16 +7,12 @@ const doc = {
         version: "1.0.0",
         description: "Role-based financial management API",
     },
-    servers: [
-        {
-            url: "https://zorvynassignment-swwh.onrender.com",
-            description: "Production Server"
-        },
-        {
-            url: "http://localhost:8000",
-            description: "Local Development Server"
-        }
-    ],
+    servers: env.nodeEnv === "production" 
+        ? [ { url: "https://zorvynassignment-swwh.onrender.com", description: "Production Server" } ]
+        : [
+            { url: "http://localhost:8000", description: "Local Development Server" },
+            { url: "https://zorvynassignment-swwh.onrender.com", description: "Production Server" }
+        ],
     components: {
         securitySchemes: {
             bearerAuth: {

@@ -9,7 +9,22 @@ const router = Router();
 router.post("/register-user", validate(registerSchema), registerUser
     // #swagger.tags = ['Auth']
     // #swagger.summary = 'Register a new user'
-    // #swagger.parameters['body'] = { in: 'body', required: true, schema: { fullName: 'Suraj Patel', username: 'surajpatel', email: 'suraj@gmail.com', password: 'MySecret@123' } }
+    /* #swagger.requestBody = {
+        required: true,
+        content: {
+            "application/json": {
+                schema: {
+                    type: "object",
+                    properties: {
+                        fullName: { type: "string", example: "Alpha Patel" },
+                        username: { type: "string", example: "surajpatel123" },
+                        email: { type: "string", example: "patelsuraiko20@gmail.com" },
+                        password: { type: "string", example: "SURA2004@" }
+                    }
+                }
+            }
+        }
+    } */
     // #swagger.responses[201] = { description: 'User registered successfully' }
     // #swagger.responses[400] = { description: 'All fields are required' }
     // #swagger.responses[409] = { description: 'Email or username already taken' }
@@ -18,7 +33,20 @@ router.post("/register-user", validate(registerSchema), registerUser
 router.post("/login", validate(loginSchema), loginUser
     // #swagger.tags = ['Auth']
     // #swagger.summary = 'Login and get access + refresh tokens'
-    // #swagger.parameters['body'] = { in: 'body', required: true, schema: { email: 'suraj@gmail.com', password: 'MySecret@123' } }
+    /* #swagger.requestBody = {
+        required: true,
+        content: {
+            "application/json": {
+                schema: {
+                    type: "object",
+                    properties: {
+                        email: { type: "string", example: "patelsuraiko20@gmail.com" },
+                        password: { type: "string", example: "SURA2004@" }
+                    }
+                }
+            }
+        }
+    } */
     // #swagger.responses[200] = { description: 'Login successful' }
     // #swagger.responses[401] = { description: 'Invalid credentials' }
     // #swagger.responses[404] = { description: 'User not found' }
