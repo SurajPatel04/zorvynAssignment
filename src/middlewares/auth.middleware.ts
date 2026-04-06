@@ -15,14 +15,7 @@ interface JwtPayload {
     fullName: string;
 }
 
-// Extend Express Request to carry authenticated user
-declare global {
-    namespace Express {
-        interface Request {
-            user?: IUser;
-        }
-    }
-}
+
 
 export const authenticate = async (
     req: Request,
@@ -47,7 +40,7 @@ export const authenticate = async (
         const user = await User.findById(decoded._id)
             .select("-password")
             .populate({
-                path: "roles",
+                path: "roleId",
                 populate: {
                     path: "permissions",
                     select: "action resource",
@@ -65,7 +58,6 @@ export const authenticate = async (
         req.user = user;
         next();
     } catch (error) {
-        console.error("Auth Middleware Error:", error);
         if (error instanceof ApiError) {
             return next(error);
         }
@@ -81,18 +73,20 @@ export const authorize = (action: string, resource: string) => {
             return next(new ApiError(401, "Authentication required."));
         }
 
-        const roles = user.roles as unknown as IRole[];
+        const role = user.roleId as unknown as IRole;
 
-        const hasPermission = roles.some((role) => {
-            const permissions = role.permissions as unknown as IPermission[];
-            return permissions.some(
-                (perm) => perm.action === action && perm.resource === resource
-            );
-        });
+        if (!role) {
+            return next(new ApiError(403, "Access denied. No role assigned."));
+        }
+
+        const permissions = role.permissions as unknown as IPermission[];
+        const hasPermission = permissions.some(
+            (perm) => perm.action === action && perm.resource === resource
+        );
 
         if (!hasPermission) {
             return next(
-                new ApiError(403, `Access denied. Required permission: ${action}:${resource}`)
+                new ApiError(403, `Access denied. Role '${role.name}' does not have sufficient permissions.`)
             );
         }
 
@@ -108,16 +102,53 @@ export const authorizeRoles = (...allowedRoles: string[]) => {
             return next(new ApiError(401, "Authentication required."));
         }
 
-        const roles = user.roles as unknown as IRole[];
+        const role = user.roleId as unknown as IRole;
+
+        if (!role) {
+            return next(new ApiError(403, "Access denied. No role assigned."));
+        }
+
         const normalizedAllowed = allowedRoles.map((r) => r.toLowerCase());
 
-        const hasRole = roles.some((role) =>
-            normalizedAllowed.includes(role.name.toLowerCase())
-        );
+        const hasRole = normalizedAllowed.includes(role.name.toLowerCase());
 
         if (!hasRole) {
             return next(
-                new ApiError(403, `Access denied. Required role(s): ${allowedRoles.join(", ")}`)
+                new ApiError(403, `Access denied. Only allowed roles: ${allowedRoles.join(", ")}`)
+            );
+        }
+
+        next();
+    };
+};
+
+export const authorizeSelfOr = (action: string, resource: string) => {
+    return (req: Request, _res: Response, next: NextFunction): void => {
+        const user = req.user;
+        const targetId = req.params.id;
+
+        if (!user) {
+            return next(new ApiError(401, "Authentication required."));
+        }
+
+        if (user._id.toString() === targetId) {
+            return next();
+        }
+
+        const role = user.roleId as unknown as IRole;
+
+        if (!role) {
+            return next(new ApiError(403, "Access denied. No role assigned."));
+        }
+
+        const permissions = role.permissions as unknown as IPermission[];
+        const hasPermission = permissions.some(
+            (perm) => perm.action === action && perm.resource === resource
+        );
+
+        if (!hasPermission) {
+            return next(
+                new ApiError(403, `Access denied. Role '${role.name}' does not have sufficient permissions, or you are not operating on your own account.`)
             );
         }
 

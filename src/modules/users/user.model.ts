@@ -1,13 +1,14 @@
 import mongoose, { Schema, Model, Document } from "mongoose";
 import bcrypt from "bcrypt";
 import { Role } from "./role.models.js";
+import validator from "validator";
 
 export interface IUser extends Document {
     fullName: string;
     username: string;
     email: string;
     password: string;
-    roles: mongoose.Types.ObjectId[];
+    roleId: mongoose.Types.ObjectId;
     isActive: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -35,20 +36,22 @@ const userSchema = new Schema<IUser>({
         unique: true,
         lowercase: true,
         index: true,
+        validate: {
+            validator: (v: string) => validator.isEmail(v),
+            message: "Invalid email format",
+        }
     },
     password: {
         type: String,
         required: true,
         select: false
     },
-    roles: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: Role,
-            index: true,
-            required: true,
-        },
-    ],
+    roleId: {
+        type: Schema.Types.ObjectId,
+        ref: Role,
+        required: [true, "Role is required"],
+        index: true,
+    },
     isActive: {
         type: Boolean,
         default: true,

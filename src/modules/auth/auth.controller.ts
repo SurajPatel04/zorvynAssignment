@@ -50,12 +50,12 @@ export const registerUser = asyncHandler(
             username: normalizedUsername,
             email: normalizedEmail,
             password: password,
-            roles: [defaultRole._id]
+            roleId: defaultRole._id
         })
         const createdUser = await User.findById(user._id)
             .select("-password")
             .populate({
-                path: "roles",
+                path: "roleId",
                 select: "name description",
             });
 
@@ -99,7 +99,7 @@ export const loginUser = asyncHandler(
         const loggedInUser = await User.findById(user._id)
             .select("-password")
             .populate({
-                path: "roles",
+                path: "roleId",
                 select: "name description",
             });
 

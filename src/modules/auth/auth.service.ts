@@ -11,7 +11,7 @@ interface ITokenUser {
     email: string;
     username: string;
     fullName: string;
-    roles: Types.ObjectId[] | string[]
+    roleId?: Types.ObjectId | string
 }
 
 interface IRefreshToken {

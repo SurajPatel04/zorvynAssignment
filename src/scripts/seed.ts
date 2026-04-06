@@ -33,7 +33,7 @@ const createUserIfNotExists = async (userData: {
     username: string;
     email: string;
     password: string;
-    roles: mongoose.Types.ObjectId[];
+    roleId: mongoose.Types.ObjectId;
     isActive: boolean;
 }) => {
     const existing = await User.findOne({ email: userData.email });
@@ -65,9 +65,9 @@ const seedDatabase = async () => {
             upsertPermission({ action: "delete", resource: "transactions", description: "Can delete financial records" }),
 
             // User management permissions
-            upsertPermission({ action: "create", resource: "users", description: "Can create new users" }),
             upsertPermission({ action: "read", resource: "users", description: "Can view users" }),
             upsertPermission({ action: "update", resource: "users", description: "Can manage user roles/status" }),
+            upsertPermission({ action: "delete", resource: "users", description: "Can delete users" }),
 
             // Dashboard permissions
             upsertPermission({ action: "read", resource: "dashboard", description: "Can view dashboard summaries" }),
@@ -109,14 +109,13 @@ const seedDatabase = async () => {
 
         // Create admin user (only if doesn't exist)
         console.log("Creating admin user...");
-        const hashedPassword = await bcrypt.hash(env.seed.adminPassword, 10);
 
         await createUserIfNotExists({
             fullName: "System Admin",
             username: "admin",
             email: env.seed.adminEmail,
-            password: hashedPassword,
-            roles: [adminRole._id],
+            password: env.seed.adminPassword,
+            roleId: adminRole._id,
             isActive: true,
         });
 
