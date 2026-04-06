@@ -118,8 +118,8 @@ const seedDatabase = async () => {
         console.log("Creating admin user...");
 
         await createUserIfNotExists({
-            fullName: "System Admin",
-            username: "admin",
+            fullName: "Suraj Patel",
+            username: "suraj",
             email: env.seed.adminEmail,
             password: env.seed.adminPassword,
             roleId: adminRole._id,

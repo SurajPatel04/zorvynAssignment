@@ -3,10 +3,11 @@ import { registerSchema, loginSchema } from "./auth.validator.js";
 import { validate } from "../../middlewares/validate.middleware.js";
 import { registerUser, loginUser, logoutUser, logoutUserFromAllDevices, refreshAccessToken } from "./auth.controller.js";
 import { authenticate } from "../../middlewares/auth.middleware.js";
+import { authRateLimiter } from "../../utils/rateLimiter.js";
 
 const router = Router();
 
-router.post("/register-user", validate(registerSchema), registerUser
+router.post("/register-user", authRateLimiter, validate(registerSchema), registerUser
     // #swagger.tags = ['Auth']
     // #swagger.summary = 'Register a new user'
     /* #swagger.requestBody = {
@@ -30,7 +31,7 @@ router.post("/register-user", validate(registerSchema), registerUser
     // #swagger.responses[409] = { description: 'Email or username already taken' }
 );
 
-router.post("/login", validate(loginSchema), loginUser
+router.post("/login", authRateLimiter, validate(loginSchema), loginUser
     // #swagger.tags = ['Auth']
     // #swagger.summary = 'Login and get access + refresh tokens'
     /* #swagger.requestBody = {
@@ -70,7 +71,7 @@ router.post("/logout-all", authenticate, logoutUserFromAllDevices
     // #swagger.responses[401] = { description: 'Authentication required' }
 );
 
-router.post("/refresh", refreshAccessToken
+router.post("/refresh", authRateLimiter, refreshAccessToken
     // #swagger.tags = ['Auth']
     // #swagger.summary = 'Refresh access token (token rotation)'
     // #swagger.description = 'Uses refresh token from cookie to issue new access + refresh token pair. Old token is revoked.'

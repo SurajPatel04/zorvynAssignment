@@ -1,10 +1,9 @@
 import jwt, { type SignOptions } from "jsonwebtoken"
 import { type Request } from "express";
 import { RefreshToken } from "./refreshToken.model.js"
-import type { StringValue } from "ms";
+import ms, { type StringValue } from "ms";
 import { env } from "../../config/env.js";
 import { Types } from "mongoose"
-
 
 interface ITokenUser {
     _id: Types.ObjectId | string;
@@ -68,8 +67,10 @@ export const generateRefreshToken = (user: Pick<ITokenUser, "_id">): string => {
 
 export const generateAndRefreshToken = async (user: Pick<ITokenUser, "_id">, req: Request): Promise<string> => {
     const refreshToken = generateRefreshToken(user);
-    const days = parseInt(env.refreshToken.expiresIn || "7", 10);
-    const expireAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+    const expireAt = new Date(
+        Date.now() + ms(env.refreshToken.expiresIn as StringValue)
+    );
+
 
     // Revoke existing refresh tokens only for the same device
     const deviceInfo = req.headers["user-agent"] || null;

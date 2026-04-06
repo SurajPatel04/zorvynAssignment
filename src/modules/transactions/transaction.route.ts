@@ -10,7 +10,7 @@ router.use(authenticate);
 
 router.get("/", authorize("read", "transactions"), getAllTransactions
     // #swagger.tags = ['Transactions']
-    // #swagger.summary = 'Get all transactions with optional filters (?type=income, ?category=salary, ?startDate=, ?endDate=, ?page=1, ?limit=10)'
+    // #swagger.summary = 'Get all transactions with optional filters (?type=income, ?category=salary, ?startDate=, ?endDate=, ?page=1, ?limit=10, ?search=query)'
     // #swagger.security = [{ "bearerAuth": [] }]
 );
 

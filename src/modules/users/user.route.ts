@@ -17,7 +17,7 @@ router.get("/me", getCurrentUser
 
 router.get("/", authorize("read", "users"), getAllUsers
     // #swagger.tags = ['Users']
-    // #swagger.summary = 'Get all users (?page=1, ?limit=10)'
+    // #swagger.summary = 'Get all users (?page=1, ?limit=10, ?search=query, ?isActive=false|all  — defaults to active users only)'
     // #swagger.security = [{ "bearerAuth": [] }]
 );
 

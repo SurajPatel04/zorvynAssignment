@@ -15,19 +15,39 @@ export const getCurrentUser = asyncHandler(async (req: Request, res: Response) =
 });
 
 export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
-    const { page, limit } = req.query;
+    const { page, limit, search, isActive } = req.query;
 
     const pageNum = Math.max(1, parseInt(page as string) || 1);
     const limitNum = Math.min(100, Math.max(1, parseInt(limit as string) || 10));
     const skip = (pageNum - 1) * limitNum;
 
+    const filter: any = {};
+    
+    // Status Filter
+    if (isActive === "false") {
+        filter.isActive = false;
+    } else if (isActive === "all") {
+        // No filter on isActive, show everyone
+    } else {
+        filter.isActive = true; // Default: Only active users
+    }
+
+    if (search) {
+        const regex = new RegExp(search as string, "i");
+        filter.$or = [
+            { fullName: regex },
+            { email: regex },
+            { username: regex }
+        ];
+    }
+
     const [users, total] = await Promise.all([
-        User.find()
+        User.find(filter)
             .select("-password")
             .populate({ path: "roleId", select: "name description" })
             .skip(skip)
             .limit(limitNum),
-        User.countDocuments(),
+        User.countDocuments(filter),
     ]);
 
     return sendSuccess(res, 200, "Users fetched successfully", { users }, {

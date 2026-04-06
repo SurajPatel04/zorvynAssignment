@@ -7,9 +7,17 @@ import mongoose from "mongoose";
 import type { CreateTransactionBody, UpdateTransactionBody } from "./transaction.validator.js";
 
 export const getAllTransactions = asyncHandler(async (req: Request, res: Response) => {
-    const { type, category, startDate, endDate, page, limit } = req.query;
+    const { type, category, startDate, endDate, page, limit, search } = req.query;
 
     const filter: any = { isDeleted: false };
+
+    if (search) {
+        const regex = new RegExp(search as string, "i");
+        filter.$or = [
+            { category: regex },
+            { notes: regex }
+        ];
+    }
 
     if (type) filter.type = type as string;
     if (category) filter.category = category as string;

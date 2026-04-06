@@ -11,7 +11,7 @@ const DEV_PASSWORD = "Test@1234";
 const devUsers = [
     { fullName: "Rahul Viewer", username: "rahul", email: "rahul@test.com", role: ROLES.VIEWER },
     { fullName: "Priya Analyst", username: "priya", email: "priya@test.com", role: ROLES.ANALYST },
-    { fullName: "Suraj Admin", username: "suraj", email: "suraj@test.com", role: ROLES.ADMIN },
+    { fullName: "Suraj Admin", username: "surajdev", email: "suraj@test.com", role: ROLES.ADMIN },
 ];
 
 const categories = {

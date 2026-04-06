@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import ms, { type StringValue } from "ms"
 dotenv.config();
 
 const requiredEnv = [
@@ -31,7 +32,12 @@ export const env = {
   },
 
   seed: {
-    adminEmail: process.env.ADMIN_EMAIL || "admin@finance.com",
-    adminPassword: process.env.ADMIN_PASSWORD || "AdminSecret@123",
+    adminEmail: process.env.ADMIN_EMAIL,
+    adminPassword: process.env.ADMIN_PASSWORD,
   },
+
+  rateLimit: {
+    max: Number(process.env.RATE_LIMIT_MAX) || 10,
+    windowMs: ms((process.env.RATE_LIMIT_WINDOW || "15m") as StringValue)
+  }
 } as const;
