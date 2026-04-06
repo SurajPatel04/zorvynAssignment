@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { User } from "../modules/users/user.model.js";
 import type { IUser } from "../modules/users/user.model.js";
-import type { IRole } from "../modules/users/role.models.js";
+import type { IRole } from "../modules/roles/role.models.js";
 import type { IPermission } from "../modules/permissions/permission.model.js";
 import "../modules/permissions/permission.model.js";
 import { env } from "../config/env.js";

@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 import Permission from "../modules/permissions/permission.model.js";
 import type { IPermission } from "../modules/permissions/permission.model.js";
-import { Role } from "../modules/users/role.models.js";
+import { Role } from "../modules/roles/role.models.js";
 import { User } from "../modules/users/user.model.js";
 import { ROLES } from "../utils/constant.js";
 import connectDB from "../config/db.js";
@@ -71,6 +71,12 @@ const seedDatabase = async () => {
 
             // Dashboard permissions
             upsertPermission({ action: "read", resource: "dashboard", description: "Can view dashboard summaries" }),
+
+            // Role management permissions
+            upsertPermission({ action: "create", resource: "roles", description: "Can create new roles" }),
+            upsertPermission({ action: "read", resource: "roles", description: "Can view roles" }),
+            upsertPermission({ action: "update", resource: "roles", description: "Can update role configurations" }),
+            upsertPermission({ action: "delete", resource: "roles", description: "Can delete roles" }),
         ]);
 
         const getPermId = (action: string, resource: string) => {
@@ -98,6 +104,7 @@ const seedDatabase = async () => {
                 getPermId("read", "transactions"),
                 getPermId("read", "users"),
                 getPermId("read", "dashboard"),
+                getPermId("read", "roles"),
             ],
         });
 

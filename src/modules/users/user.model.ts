@@ -1,6 +1,6 @@
 import mongoose, { Schema, Model, Document } from "mongoose";
 import bcrypt from "bcrypt";
-import { Role } from "./role.models.js";
+import { Role } from "../roles/role.models.js";
 import validator from "validator";
 
 export interface IUser extends Document {

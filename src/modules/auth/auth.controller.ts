@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken"
 import { User } from "../users/user.model.js"
-import { Role } from "../users/role.models.js"
+import { Role } from "../roles/role.models.js"
 import bcrypt from "bcrypt"
 import type { Request, Response } from "express"
 import type { RegisterBody, LoginBody } from "./auth.validator.js"
