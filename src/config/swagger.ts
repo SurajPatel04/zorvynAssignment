@@ -8,7 +8,12 @@ const doc = {
     },
     servers: [
         {
+            url: "https://zorvynassignment-swwh.onrender.com",
+            description: "Production Server"
+        },
+        {
             url: "http://localhost:8000",
+            description: "Local Development Server"
         }
     ],
     components: {

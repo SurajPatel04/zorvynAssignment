@@ -12,6 +12,7 @@ import userRouter from "./modules/users/user.route.js";
 import permissionRouter from "./modules/permissions/permission.route.js";
 import roleRouter from "./modules/roles/role.route.js";
 import transactionRouter from "./modules/transactions/transaction.route.js";
+import dashboardRouter from "./modules/dashboard/dashboard.route.js";
 
 const app: Application = express();
 
@@ -28,6 +29,12 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/permissions", permissionRouter);
 app.use("/api/v1/roles", roleRouter);
 app.use("/api/v1/transactions", transactionRouter);
+app.use("/api/v1/dashboard", dashboardRouter);
+
+// base route to serve swagger
+app.get("/", (req: Request, res: Response) => {
+    res.redirect("/api-docs");
+});
 
 app.use((req: Request, res: Response) => {
     res.status(404).json({

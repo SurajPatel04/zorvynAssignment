@@ -20,6 +20,7 @@
     "build": "tsx src/config/swagger.ts && tsc && cp src/config/swagger-output.json dist/config/",
     "start": "node dist/server.js",
     "seed": "tsx src/scripts/seed.ts",
+    "seed:dev": "tsx src/scripts/seed.dev.ts",
     "swagger": "tsx src/config/swagger.ts"
   },
   "devDependencies": {

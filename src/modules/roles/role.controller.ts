@@ -7,7 +7,6 @@ import mongoose from "mongoose";
 import type { CreateRoleBody, UpdateRoleBody } from "./role.validator.js";
 import { ROLES } from "../../utils/constant.js";
 
-// GET /roles
 export const getAllRoles = asyncHandler(async (req: Request, res: Response) => {
     const { page, limit } = req.query;
 
@@ -31,7 +30,6 @@ export const getAllRoles = asyncHandler(async (req: Request, res: Response) => {
     });
 });
 
-// GET /roles/:id
 export const getRoleById = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
 
@@ -48,7 +46,6 @@ export const getRoleById = asyncHandler(async (req: Request, res: Response) => {
     return sendSuccess(res, 200, "Role fetched successfully", { role });
 });
 
-// POST /roles
 export const createRole = asyncHandler(async (req: Request, res: Response) => {
     const { name, description, permissions } = req.body as CreateRoleBody;
 
@@ -73,7 +70,6 @@ export const createRole = asyncHandler(async (req: Request, res: Response) => {
     return sendSuccess(res, 201, "Role created successfully", { role: populatedRole });
 });
 
-// PATCH /roles/:id
 export const updateRole = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
     const { name, description, permissions } = req.body as UpdateRoleBody;
@@ -105,7 +101,6 @@ export const updateRole = asyncHandler(async (req: Request, res: Response) => {
     return sendSuccess(res, 200, "Role updated successfully", { role: populatedRole });
 });
 
-// DELETE /roles/:id
 export const deleteRole = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
 
