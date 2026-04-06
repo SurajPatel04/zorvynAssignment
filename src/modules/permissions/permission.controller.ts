@@ -51,8 +51,6 @@ export const createPermission = asyncHandler(async (req: Request, res: Response)
     return sendSuccess(res, 201, "Permission created successfully", { permission });
 });
 
-
-
 export const deletePermission = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
 

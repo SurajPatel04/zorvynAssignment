@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { Role } from "./role.models.js";
+import { Role } from "./role.model.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { ApiError } from "../../utils/apiError.js";
 import { sendSuccess } from "../../utils/apiResponse.js";
@@ -43,7 +43,7 @@ export const createRole = asyncHandler(async (req: Request, res: Response) => {
         name,
         permissions: permissions || []
     };
-    
+
     if (description !== undefined) {
         rolePayload.description = description;
     }

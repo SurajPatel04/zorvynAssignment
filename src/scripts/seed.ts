@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 import Permission from "../modules/permissions/permission.model.js";
 import type { IPermission } from "../modules/permissions/permission.model.js";
-import { Role } from "../modules/roles/role.models.js";
+import { Role } from "../modules/roles/role.model.js";
 import { User } from "../modules/users/user.model.js";
 import { ROLES } from "../utils/constant.js";
 import connectDB from "../config/db.js";

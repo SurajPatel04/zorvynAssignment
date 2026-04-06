@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { User } from "./user.model.js";
-import { Role } from "../roles/role.models.js";
+import { Role } from "../roles/role.model.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { ApiError } from "../../utils/apiError.js";
 import { sendSuccess } from "../../utils/apiResponse.js";
