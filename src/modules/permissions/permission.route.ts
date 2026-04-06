@@ -14,7 +14,7 @@ router.use(authorizeRoles(ROLES.ADMIN));
 
 router.get("/", getAllPermissions
     // #swagger.tags = ['Permissions']
-    // #swagger.summary = 'Get all permissions, or filter using query parameters (?action=create, ?resource=users)'
+    // #swagger.summary = 'Get all permissions, or filter using query parameters (?action=create, ?resource=users, ?page=1, ?limit=10)'
     // #swagger.security = [{ "bearerAuth": [] }]
 );
 

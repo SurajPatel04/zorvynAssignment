@@ -9,8 +9,26 @@ import { ROLES } from "../../utils/constant.js";
 
 // GET /roles
 export const getAllRoles = asyncHandler(async (req: Request, res: Response) => {
-    const roles = await Role.find().populate("permissions");
-    return sendSuccess(res, 200, "Roles fetched successfully", { roles });
+    const { page, limit } = req.query;
+
+    const pageNum = Math.max(1, parseInt(page as string) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit as string) || 10));
+    const skip = (pageNum - 1) * limitNum;
+
+    const [roles, total] = await Promise.all([
+        Role.find()
+            .populate("permissions")
+            .skip(skip)
+            .limit(limitNum),
+        Role.countDocuments(),
+    ]);
+
+    return sendSuccess(res, 200, "Roles fetched successfully", { roles }, {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum),
+    });
 });
 
 // GET /roles/:id

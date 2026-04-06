@@ -8,9 +8,10 @@ const require = createRequire(import.meta.url);
 const swaggerOutput = require("./config/swagger-output.json");
 
 import authRouter from "./modules/auth/auth.routes.js";
-import userRouter from "./modules/users/user.routes.js";
-import permissionRouter from "./modules/permissions/permission.routes.js";
-import roleRouter from "./modules/roles/role.routes.js";
+import userRouter from "./modules/users/user.route.js";
+import permissionRouter from "./modules/permissions/permission.route.js";
+import roleRouter from "./modules/roles/role.route.js";
+import transactionRouter from "./modules/transactions/transaction.route.js";
 
 const app: Application = express();
 
@@ -26,6 +27,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/permissions", permissionRouter);
 app.use("/api/v1/roles", roleRouter);
+app.use("/api/v1/transactions", transactionRouter);
 
 app.use((req: Request, res: Response) => {
     res.status(404).json({

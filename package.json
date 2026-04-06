@@ -17,7 +17,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx src/config/swagger.ts && tsx watch src/server.ts",
-    "build": "tsc",
+    "build": "tsx src/config/swagger.ts && tsc && cp src/config/swagger-output.json dist/config/",
     "start": "node dist/server.js",
     "seed": "tsx src/scripts/seed.ts",
     "swagger": "tsx src/config/swagger.ts"

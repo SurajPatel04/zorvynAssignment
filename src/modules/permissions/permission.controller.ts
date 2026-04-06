@@ -7,19 +7,34 @@ import mongoose from "mongoose";
 import type { CreatePermissionBody } from "./permission.validator.js";
 
 export const getAllPermissions = asyncHandler(async (req: Request, res: Response) => {
-    const { action, resource } = req.query;
+    const { action, resource, page, limit } = req.query;
 
     const filter: Record<string, any> = {};
     if (action) filter.action = action as string;
     if (resource) filter.resource = resource as string;
 
-    const permissions = await Permission.find(filter).sort({ resource: 1, action: 1 });
+    const pageNum = Math.max(1, parseInt(page as string) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit as string) || 10));
+    const skip = (pageNum - 1) * limitNum;
+
+    const [permissions, total] = await Promise.all([
+        Permission.find(filter)
+            .sort({ resource: 1, action: 1 })
+            .skip(skip)
+            .limit(limitNum),
+        Permission.countDocuments(filter),
+    ]);
 
     if (Object.keys(filter).length > 0 && permissions.length === 0) {
         throw new ApiError(404, "No permissions found matching the criteria");
     }
 
-    return sendSuccess(res, 200, "Permissions fetched successfully", { permissions });
+    return sendSuccess(res, 200, "Permissions fetched successfully", { permissions }, {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum),
+    });
 });
 
 export const getPermissionById = asyncHandler(async (req: Request, res: Response) => {

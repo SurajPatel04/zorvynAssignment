@@ -10,7 +10,7 @@ router.use(authenticate);
 
 router.get("/", authorize("read", "roles"), getAllRoles
     // #swagger.tags = ['Roles']
-    // #swagger.summary = 'Get all roles'
+    // #swagger.summary = 'Get all roles (?page=1, ?limit=10)'
     // #swagger.security = [{ "bearerAuth": [] }]
 );
 

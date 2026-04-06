@@ -15,11 +15,27 @@ export const getCurrentUser = asyncHandler(async (req: Request, res: Response) =
 });
 
 export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
-    const users = await User.find()
-        .select("-password")
-        .populate({ path: "roleId", select: "name description" });
+    const { page, limit } = req.query;
 
-    return sendSuccess(res, 200, "Users fetched successfully", { users });
+    const pageNum = Math.max(1, parseInt(page as string) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit as string) || 10));
+    const skip = (pageNum - 1) * limitNum;
+
+    const [users, total] = await Promise.all([
+        User.find()
+            .select("-password")
+            .populate({ path: "roleId", select: "name description" })
+            .skip(skip)
+            .limit(limitNum),
+        User.countDocuments(),
+    ]);
+
+    return sendSuccess(res, 200, "Users fetched successfully", { users }, {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum),
+    });
 });
 
 export const getUserById = asyncHandler(async (req: Request, res: Response) => {
