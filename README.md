@@ -76,6 +76,8 @@ RATE_LIMIT_WINDOW=15m
 RATE_LIMIT_MAX=10
 ```
 
+> ⚠️ **Never commit your real `.env` file.** It is already listed in `.gitignore`.
+
 ### 3. Seed the Database
 
 **⚠️ Important for Evaluators**: Please run both seed commands to populate roles, permissions, users, and transactions before starting the server.
@@ -107,11 +109,69 @@ After running `npm run seed:dev`, you can use these accounts to easily test the 
 
 | User Email | Role | What they can do |
 |---|---|---|
-| `rahul@test.com` | **Viewer** | Can only read dashboard summaries and transaction lists. |
+| `rahul@test.com` | **Viewer** | Can read dashboard summaries and transaction list. Cannot modify anything. |
 | `priya@test.com` | **Analyst** | Can read dashboards, transactions, users, and roles. Cannot modify. |
 | `suraj@test.com` | **Admin** | Full access. Can create/edit/delete transactions and manage users. |
 
 *Note: The frontend should point to `POST /api/v1/auth/login` to obtain the HttpOnly cookie auth session!*
+
+---
+
+## 🛣️ API Routes Overview
+
+### Auth
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| POST | `/api/v1/auth/register-user` | Register a new user | Public |
+| POST | `/api/v1/auth/login` | Login and get tokens | Public |
+| POST | `/api/v1/auth/logout` | Logout current session | Authenticated |
+| POST | `/api/v1/auth/logout-all` | Logout from all devices | Authenticated |
+| POST | `/api/v1/auth/refresh` | Refresh access token (token rotation) | Public |
+
+### Users
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/api/v1/users/me` | Get current user profile | All |
+| GET | `/api/v1/users` | Get all users (`?search=`, `?isActive=false\|all`, `?page=`, `?limit=`) | Analyst, Admin |
+| GET | `/api/v1/users/:id` | Get user by ID | Analyst, Admin |
+| PATCH | `/api/v1/users/:id` | Update user details | Admin |
+| DELETE | `/api/v1/users/:id` | Soft delete user | Admin |
+| PATCH | `/api/v1/users/:id/deactivate` | Deactivate a user | Self, Admin |
+| PATCH | `/api/v1/users/:id/reactivate` | Reactivate a user | Admin |
+
+### Transactions
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/api/v1/transactions` | Get all transactions (`?type=`, `?category=`, `?search=`, `?startDate=`, `?endDate=`, `?page=`, `?limit=`) | Viewer, Analyst, Admin |
+| GET | `/api/v1/transactions/:id` | Get transaction by ID | Viewer, Analyst, Admin |
+| POST | `/api/v1/transactions` | Create a transaction | Admin |
+| PATCH | `/api/v1/transactions/:id` | Update a transaction | Admin |
+| DELETE | `/api/v1/transactions/:id` | Soft delete a transaction | Admin |
+
+### Dashboard
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/api/v1/dashboard/summary` | Total income, expenses, net balance | Viewer, Analyst, Admin |
+| GET | `/api/v1/dashboard/category-totals` | Category-wise totals (`?type=income\|expense`) | Viewer, Analyst, Admin |
+| GET | `/api/v1/dashboard/trends` | Monthly or weekly trends (`?period=weekly\|monthly`) | Viewer, Analyst, Admin |
+| GET | `/api/v1/dashboard/recent` | Recent transactions (`?limit=10`) | Viewer, Analyst, Admin |
+
+### Roles
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/api/v1/roles` | Get all roles (`?page=`, `?limit=`) | Analyst, Admin |
+| GET | `/api/v1/roles/:id` | Get role by ID | Analyst, Admin |
+| POST | `/api/v1/roles` | Create a role | Admin |
+| PATCH | `/api/v1/roles/:id` | Update a role | Admin |
+| DELETE | `/api/v1/roles/:id` | Delete a role | Admin |
+
+### Permissions
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/api/v1/permissions` | Get all permissions (`?action=`, `?resource=`, `?page=`, `?limit=`) | Admin |
+| GET | `/api/v1/permissions/:id` | Get permission by ID | Admin |
+| POST | `/api/v1/permissions` | Create a permission | Admin |
+| DELETE | `/api/v1/permissions/:id` | Delete a permission | Admin |
 
 ---
 
@@ -122,7 +182,7 @@ Instead of hardcoding role limitations (`if (user.role === 'Admin')`), I designe
 - The system has **Permissions** (e.g., `action: "read"`, `resource: "transactions"`).
 - **Roles** are assigned an array of Permission references.
 - **Users** are assigned a Role.
-- The `authorize("action", "resource")` middleware intercepts the request, fetches the user's role and permissions fresh from the database on every request, and dynamically validates access. This ensures permission changes take effect immediately without requiring re login.
+- The `authorize("action", "resource")` middleware intercepts the request, fetches the user's role and permissions fresh from the database on every request, and dynamically validates access. This ensures permission changes take effect immediately without requiring re-login.
 
 ### 2. Dashboard Aggregation Intelligence
 To avoid fetching large arrays of data into Node.js memory just to calculate totals, I utilized **native MongoDB Aggregation Pipelines**:
@@ -144,7 +204,7 @@ To protect unauthenticated endpoints from brute-force and abuse, `express-rate-l
 |---|---|
 | `POST /auth/login` | 10 requests / 15 min per IP |
 | `POST /auth/refresh` | 10 requests / 15 min per IP |
-| `POST /auth/register` | 10 requests / 15 min per IP |
+| `POST /auth/register-user` | 10 requests / 15 min per IP |
 
 The window duration and max attempts are configurable via environment variables (`RATE_LIMIT_WINDOW`, `RATE_LIMIT_MAX`), with sensible defaults so the app works out of the box without them.
 
@@ -155,7 +215,7 @@ The window duration and max attempts are configurable via environment variables 
 A fully interactive Swagger UI is available both locally and on the live deployment.
 
 **Live (Deployed):** https://zorvynassignment-swwh.onrender.com/api-docs
-
+```````````````````````````````
 > **Note:** The live server is hosted on Render's free tier, which spins down
 > after 15 minutes of inactivity. If the page doesn't load immediately,
 > please wait 30–60 seconds for the server to wake up and then refresh.
@@ -163,3 +223,13 @@ A fully interactive Swagger UI is available both locally and on the live deploym
 **Local (once the server is running):** http://localhost:8000/api-docs
 
 You can test all endpoints directly from the browser by clicking the **"Authorize"** button and logging in via the `/auth/login` endpoint interface.
+
+---
+
+## 📬 Postman Documentation
+
+A fully documented Postman collection is available for all API endpoints.
+
+**Postman Docs:** https://documenter.getpostman.com/view/37110858/2sBXiqFUco
+
+> Includes all endpoints with request/response examples, authentication flow, and environment variables.
