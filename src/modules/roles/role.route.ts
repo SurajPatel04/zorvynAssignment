@@ -49,6 +49,26 @@ router.post("/", authorize("create", "roles"), validate(createRoleSchema), creat
 router.patch("/:id", authorize("update", "roles"), validate(updateRoleSchema), updateRole
     // #swagger.tags = ['Roles']
     // #swagger.summary = 'Update an existing role'
+    /*  
+        #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/components/schemas/UpdateRole"
+                    },
+                    example: {
+                        name: "accountant",
+                        description: "Can manage financial transactions and view reports",
+                        permissions: [
+                            "65f1a2b3c4d5e6f7a8b9c0d1",
+                            "65f1a2b3c4d5e6f7a8b9c0d2"
+                        ]
+                    }
+                }
+            }
+        } 
+    */
     // #swagger.security = [{ "bearerAuth": [] }]
 );
 
