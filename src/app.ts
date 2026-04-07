@@ -3,6 +3,8 @@ import type { Request, Response, NextFunction } from "express";
 import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 import { createRequire } from "module";
+import cors from "cors";
+import { env } from "./config/env.js";
 
 const require = createRequire(import.meta.url);
 const swaggerOutput = require("./config/swagger-output.json");
@@ -22,6 +24,19 @@ app.use(cookieParser());
 
 // swagger docs
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOutput));
+const allowedOrigins =
+    env.nodeEnv === "production"
+        ? ["https://zorvynassignment-swwh.onrender.com"]
+        : ["http://localhost:3000", "http://localhost:5173"];
+app.use(
+    cors({
+        origin: allowedOrigins,
+        credentials: true,         // required for HttpOnly cookies to work cross-origin
+        methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+    })
+);
+
 
 // routes
 app.use("/api/v1/auth", authRouter);

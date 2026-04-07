@@ -92,6 +92,10 @@ npm run seed:dev
 
 ### 4. Start the Server
 
+> ⚠️ **Note:** The `NODE_ENV` value controls which server Swagger UI targets by default.
+> Set `NODE_ENV=development` for local testing (defaults to `localhost:8000`) or
+> `NODE_ENV=production` for the live deployment.
+
 ```bash
 # Start in development mode (with hot-reloading)
 npm run dev
